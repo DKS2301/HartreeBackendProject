@@ -31,6 +31,7 @@ public class TrialApplication implements ApplicationRunner {
 			System.out.println(country.getName());
 		}
 		eventSimulation.createEventSimulation(1);
+		dataGenerationService.firstNTally(20);
 	}
 
 	public static void main(String[] args) {

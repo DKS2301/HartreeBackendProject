@@ -1,10 +1,7 @@
 package com.example.trial.services;
-import com.example.trial.model.Event_Item;
-import com.example.trial.model.Events;
+import com.example.trial.model.*;
 import com.example.trial.repository.AthleteRepository;
 import com.example.trial.repository.CountryRepository;
-import com.example.trial.model.Country;
-import com.example.trial.model.Athlete;
 import com.example.trial.repository.EventRepository;
 import com.example.trial.repository.Event_ItemRepository;
 import com.github.javafaker.Faker;
@@ -13,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+import static java.lang.Math.min;
 
 
 @Service
@@ -92,47 +91,224 @@ public class DataGenerationService {
 
         }
     }
-
+    @Transactional
     public List<Country> getAllCountries() {
+
         return countryRepository.findAll();
     }
-//    public List<Athlete> getAllAthletes() {
-//        return athleteRepository.findAll();
-//    }
+    @Transactional
+    public long totalMedalCount(Athlete athlete){
+        return event_itemRepository.countgoldMedals(athlete)+event_itemRepository.countsilverMedals(athlete)+event_itemRepository.countbronzeMedals(athlete);
+    }
+    @Transactional
+    public long totalPoints(Athlete athlete){
+        return event_itemRepository.countgoldMedals(athlete)*3+event_itemRepository.countsilverMedals(athlete)*2+event_itemRepository.countbronzeMedals(athlete)*1;
+    }
+    @Transactional
+    public List<Athlete> getAllAthletes() {
+        return athleteRepository.findAll();
+    }
+    @Transactional
+    public Athlete highestMedalAthlete(Events event){
+        Athlete maxMedals =null;
+        List<Athlete> athletes=eventRepository.findAthletesByEvent(event);
+        for(Athlete athlete:athletes){
+            if(maxMedals ==null){
+                maxMedals =athlete;
+            }
+            else{
+                if(totalMedalCount(maxMedals)<totalMedalCount(athlete)){
+                    maxMedals =athlete;
+                }
+            }
+        }
+        return maxMedals;
+    }
+    @Transactional
+    public Athlete maxPointAthlete(){
+        Athlete maxPoints =null;
+        List<Athlete> athletes=athleteRepository.findAll();
+        for(Athlete athlete:athletes){
+            if(maxPoints ==null){
+                maxPoints =athlete;
+            }
+            else{
+                if(totalPoints(maxPoints)<totalPoints(athlete)){
+                    maxPoints =athlete;
+                }
+            }
+        }
+        return maxPoints;
+    }
+    @Transactional
+    public List<MedalTally> firstNTally(int n){
+        List<Country> countries=countryRepository.findAll();
+        List<MedalTally> medalTallies=new ArrayList<>();
+        for(Country country:countries){
+            MedalTally c=new MedalTally(country,countryGold(country),countrySilver(country),countryBronze(country),totalPointsByCountry(country));
+            medalTallies.add(c);
+        }
+        medalTallies.sort(Collections.reverseOrder());
+        return medalTallies.subList(0,min(n,medalTallies.size()-1));
+    }
+    @Transactional
+    public List<MedalTally> firstNTally(int n,Events event){
+        List<Country> countries=eventRepository.findCountryByEvent(event);
+        List<MedalTally> medalTallies=new ArrayList<>();
+        for(Country country:countries){
+            MedalTally c=new MedalTally(country,countryGold(country),countrySilver(country),countryBronze(country),totalPointsByCountry(country));
+            medalTallies.add(c);
+        }
+        medalTallies.sort(Collections.reverseOrder());
+        return medalTallies.subList(0,min(n,medalTallies.size()-1));
+    }
+    @Transactional
+    public long totalPointsByCountry(Country country){
+        return 3*countryGold(country)+2*countrySilver(country)+countryBronze(country);
+    }
+    @Transactional
+    public long countryMedals(Country country){
+        long point=0;
+        Set<Athlete> athletes=athleteRepository.countryAthletes(country);
+        for(Athlete athlete:athletes){
+            point+=totalMedalCount(athlete);
+        }
+        return point;
+    }
+    @Transactional
+    public long countryGold(Country country){
+        long golds=0;
+        Set<Athlete> athletes=athleteRepository.countryAthletes(country);
+        for(Athlete athlete:athletes){
+            golds+=event_itemRepository.countgoldMedals(athlete);
+        }
+        return golds;
+    }
+    @Transactional
+    public long countrySilver(Country country){
+        long silvers=0;
+        Set<Athlete> athletes=athleteRepository.countryAthletes(country);
+        for(Athlete athlete:athletes){
+            silvers+=event_itemRepository.countsilverMedals(athlete);
+        }
+        return silvers;
+    }
+    @Transactional
+    public long countryBronze(Country country){
+        long bronzes =0;
+        Set<Athlete> athletes=athleteRepository.countryAthletes(country);
+        for(Athlete athlete:athletes){
+            bronzes +=event_itemRepository.countbronzeMedals(athlete);
+        }
+        return bronzes;
+    }
+    @Transactional
+    public Country highestGold(Events event){
+        List<Country> countries=eventRepository.findCountryByEvent(event);
+        Country maxGold=null;
+        for(Country country:countries){
+            if(maxGold==null){
+                maxGold=country;
+            }
+            else{
+                if(countryGold(maxGold)<countryGold(country)){
+                    maxGold=country;
+                }
+            }
+        }
+        return maxGold;
+    }
+    @Transactional
+    public Country highestSilver(Events event){
+        List<Country> countries=eventRepository.findCountryByEvent(event);
+        Country maxSilver =null;
+        for(Country country:countries){
+            if(maxSilver ==null){
+                maxSilver =country;
+            }
+            else{
+                if(countrySilver(maxSilver)<countryGold(country)){
+                    maxSilver =country;
+                }
+            }
+        }
+        return maxSilver;
+    }
+    @Transactional
+    public Country highestBronze(Events event){
+        List<Country> countries=eventRepository.findCountryByEvent(event);
+        Country maxBronze =null;
+        for(Country country:countries){
+            if(maxBronze ==null){
+                maxBronze =country;
+            }
+            else{
+                if(countryBronze(maxBronze)<countryGold(country)){
+                    maxBronze =country;
+                }
+            }
+        }
+        return maxBronze;
+    }
+    @Transactional
     public List<Events> getAllEvents() {
         return eventRepository.findAll();
     }
+    @Transactional
     public Events getEventById(long id) {
         return eventRepository.findById(id).orElse(null);
     }
+    @Transactional
     public List<Event_Item> getAllEventItems() {
+
         return event_itemRepository.findAll();
     }
-
+    @Transactional
     public Country getCountryById(String id) {
         return countryRepository.findById(id).orElse(null);
     }
-//    public Athlete getAthleteById(Long id) {
-//        return athleteRepository.findById(id).orElse(null);
-//    }
-//    public Event_Item getEvent_itemRepository(Long id){
-//        return event_itemRepository.findById(id).orElse(null);
-//    }
+    @Transactional
+    public Athlete getAthleteById(Long id) {
+        return athleteRepository.findById(id).orElse(null);
+    }
+    @Transactional
+    public Event_Item getEvent_itemById(Long id){
+        return event_itemRepository.findById(id).orElse(null);
+    }
+    @Transactional
     public Country saveCountry(Country country) {
+
         return countryRepository.save(country);
     }
-    public Event_Item saveEvent_Item(Event_Item eventItem){
-        return event_itemRepository.save(eventItem);
+    @Transactional
+    public Athlete saveAthlete(Athlete athlete) {
+
+        return athleteRepository.save(athlete);
     }
+    @Transactional
     public void deleteCountry(String id) {
+
         countryRepository.deleteById(id);
     }
+    @Transactional
+    public void deleteAthlete(long id) {
 
+        athleteRepository.deleteById(id);
+    }
+    @Transactional
     public Country updateCountry(String id,Country country) {
         if(countryRepository.existsById(id)) {
             country.setIso_code(id);
             return countryRepository.save(country);
         }
         return null;
+    }
+    @Transactional
+    public Event_Item saveEvent_item(Event_Item eventItem) {
+        return event_itemRepository.save(eventItem);
+    }
+    @Transactional
+    public void deleteEvent_item(long id) {
+        event_itemRepository.deleteById(id);
     }
 }

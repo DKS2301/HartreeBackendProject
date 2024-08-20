@@ -46,7 +46,7 @@ public class EventSimulation {
                 eventItem1.setGold(winnersList.get(0));
                 eventItem1.setSilver(winnersList.get(1));
                 eventItem1.setBronze(winnersList.get(2));
-                System.out.println(dataGenerationService.saveEvent_Item(eventItem1));
+                System.out.println(dataGenerationService.saveEvent_item(eventItem1));
             }
         }
     }

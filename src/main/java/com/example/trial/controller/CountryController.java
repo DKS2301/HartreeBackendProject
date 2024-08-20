@@ -2,6 +2,7 @@ package com.example.trial.controller;
 
 import com.example.trial.model.Country;
 import com.example.trial.services.DataGenerationService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ public class CountryController {
     public List<Country> getAllCountries() {
         return dataGenerationService.getAllCountries();
     }
+
 
     @GetMapping("/{id}")
     public Country getCountryById(@PathVariable String id) {
@@ -37,7 +39,6 @@ public class CountryController {
         }
         return ResponseEntity.notFound().build();
     }
-
     @DeleteMapping("/{id}")
     public void deleteCountry(@PathVariable String id) {
         dataGenerationService.deleteCountry(id);
