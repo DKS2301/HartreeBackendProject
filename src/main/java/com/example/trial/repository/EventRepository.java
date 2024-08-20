@@ -10,9 +10,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface EventRepository extends JpaRepository<Events, Long> {
-    @Query("SELECT c from Country c where c.event=:event")
+    @Query("SELECT c from Country c JOIN c.event e where e=:event")
     List<Country> findCountryByEvent(@Param("event") Events event);
 
-    @Query("SELECT a from Athlete a where a.event=:event")
+    @Query("SELECT a from Athlete a JOIN a.event e where e=:event")
     List<Athlete> findAthletesByEvent(@Param("event") Events event);
 }
