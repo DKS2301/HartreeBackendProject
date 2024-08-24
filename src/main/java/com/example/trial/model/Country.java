@@ -1,5 +1,6 @@
 package com.example.trial.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.javafaker.Faker;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,9 +20,11 @@ public class Country {
     private String name;
 
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Athlete> athletes;
 
     @ManyToMany(mappedBy = "countries")
+    @JsonIgnore
     private Set<Events> event;
 
     @Override

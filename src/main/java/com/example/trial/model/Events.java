@@ -1,5 +1,6 @@
 package com.example.trial.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class Events {
     private String name;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Event_Item> eventItem;
 
     @ManyToMany
@@ -26,6 +28,7 @@ public class Events {
             joinColumns = @JoinColumn(name = "events_id"), // Foreign key column for events
             inverseJoinColumns = @JoinColumn(name = "athlete_id") // Foreign key column for athlete
     )
+    @JsonIgnore
     private Set<Athlete> athletes;
 
     @ManyToMany
@@ -34,5 +37,6 @@ public class Events {
             joinColumns = @JoinColumn(name = "events_id"), // Foreign key column for events
             inverseJoinColumns = @JoinColumn(name = "country_id") // Foreign key column for country
     )
+    @JsonIgnore
     private Set<Country> countries;
 }

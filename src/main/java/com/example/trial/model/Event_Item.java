@@ -1,5 +1,6 @@
 package com.example.trial.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ public class Event_Item {
 
     private String event_name;
     @ManyToMany(mappedBy = "eventItems")
-
+    @JsonIgnore
     private Set<Athlete> athletes;
 
     @ManyToOne

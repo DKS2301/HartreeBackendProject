@@ -12,6 +12,12 @@ import java.util.Set;
 
 public interface AthleteRepository extends JpaRepository<Athlete,Long> {
     @Query("select distinct a from Athlete a where a.country=:country")
-    Set<Athlete> countryAthletes(@Param("country") Country country);
+    List<Athlete> countryAthletes(@Param("country") Country country);
 
+    @Query("SELECT distinct a from Athlete a where a.gender='F'")
+    List<Athlete> femaleAthletes();
+
+    @Query("SELECT distinct a from Athlete a where a.gender='M'")
+    List<Athlete> maleAthletes();
 }
+

@@ -30,18 +30,18 @@ public class TrialApplication implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		dataGenerationService.generateData(1); // Generate 100 records
-		eventSimulation.createEventSimulation(1);
-		eventSimulation.createEventSimulation(2);
-		List<Events> events=dataGenerationService.getAllEvents();
-		List<MedalTally> mt=new ArrayList<>();
-		System.out.println("\n\n[OUTPUT]Events are\n"+events);
-		for (Events event:events) {
-			if(event.getId()==1) {
-				mt = dataGenerationService.firstNTally(4, event);
-			}
-		}
-		System.out.println(mt);
+//		dataGenerationService.generateData(1); // Generate 100 records
+//		eventSimulation.createEventSimulation(1);
+//		eventSimulation.createEventSimulation(2);
+//		List<Events> events=dataGenerationService.getAllEvents();
+//		List<MedalTally> mt=new ArrayList<>();
+//		System.out.println("\n\n[OUTPUT]Events are\n"+events);
+//		for (Events event:events) {
+//			if(event.getId()==1) {
+//				mt = dataGenerationService.firstNTally(4, event);
+//			}
+//		}
+		System.out.println("hello");
 
 
 	}

@@ -1,5 +1,6 @@
 package com.example.trial.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class Athlete {
     private Country country;
 
     @ManyToMany(mappedBy = "athletes")
+    @JsonIgnore
     private Set<Events> event;
 
     @ManyToMany
@@ -33,14 +35,18 @@ public class Athlete {
             joinColumns = @JoinColumn(name = "athlete_id"),
             inverseJoinColumns = @JoinColumn(name = "event_item_id")
     )
+    @JsonIgnore
     private Set<Event_Item> eventItems;
 
     @OneToMany(mappedBy = "gold")
+    @JsonIgnore
     private Set<Event_Item> gold;
 
     @OneToMany(mappedBy = "silver")
+    @JsonIgnore
     private Set<Event_Item> silver;
 
     @OneToMany(mappedBy = "bronze")
+    @JsonIgnore
     private Set<Event_Item> bronze;
 }
