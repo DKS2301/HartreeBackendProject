@@ -19,5 +19,12 @@ public interface AthleteRepository extends JpaRepository<Athlete,Long> {
 
     @Query("SELECT distinct a from Athlete a where a.gender='M'")
     List<Athlete> maleAthletes();
+
+
+    @Query("SELECT a from Athlete a JOIN a.event e where e=:event")
+    List<Athlete> findAthletesByEvent(@Param("event") Events event);
+
+    @Query("SELECT a from Athlete a JOIN a.event e where e=:event and a.country=:country")
+    List<Athlete> findAthletesByEventCountry(@Param("event") Events event,@Param("country") Country country);
 }
 

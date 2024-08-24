@@ -25,9 +25,9 @@ public class EventSimulation {
         Events event = dataGenerationService.getEventById(eventId);
         if(event!=null){
             Faker faker = new Faker();
-            Hibernate.initialize(event.getEventItem()); // Ensure Hibernate session is active
-            Set<Event_Item> eventItem=event.getEventItem();
-            //List<Event_Item> eventItemList=new ArrayList<>(eventItem);
+            //Hibernate.initialize(event.getEventItem()); // Ensure Hibernate session is active
+            //Set<Event_Item> eventItem=event.getEventItem();
+            List<Event_Item> eventItem=new ArrayList<>(event.getEventItem());
             //Event_Item item=eventItemList.get(faker.number().numberBetween(0,eventItem.size()-1));
             for(Event_Item eventItem1:eventItem){
                 Set<Athlete> athletes=eventItem1.getAthletes();

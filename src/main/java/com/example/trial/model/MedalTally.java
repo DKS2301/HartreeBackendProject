@@ -1,11 +1,16 @@
 package com.example.trial.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class MedalTally implements Comparable<MedalTally> {
     Country country;
-    long gold;
-    long silver;
-    long bronze;
-    long points;
+    private long gold;
+    private long silver;
+    private long bronze;
+    private long points;
     public MedalTally(Country country,long gold,long silver,long bronze,long points) {
         this.country = country;
         this.gold = gold;

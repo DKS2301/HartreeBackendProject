@@ -22,7 +22,7 @@ public class Events {
     @JsonIgnore
     private Set<Event_Item> eventItem;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "events_athlete", // Name of the join table
             joinColumns = @JoinColumn(name = "events_id"), // Foreign key column for events

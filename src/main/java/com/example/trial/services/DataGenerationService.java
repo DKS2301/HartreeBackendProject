@@ -63,6 +63,7 @@ public class DataGenerationService {
                 items.add(item);
                 event_itemRepository.save(item);
             }
+            Set<Athlete> athletes = new HashSet<>();
             for (int j = 0; j < faker.number().numberBetween(10, 100); j++) {
                 Set<Event_Item> registered_events = new HashSet<>();
                 int random = faker.number().numberBetween(0, 1);
@@ -84,11 +85,12 @@ public class DataGenerationService {
                 System.out.println("athletes");
                 List<Country> countriesList=new ArrayList<>(countries);
                 athlete.setCountry(countriesList.get(faker.number().numberBetween(0, countries.size()-1))); // Random country
+                athletes.add(athlete);
                 athleteRepository.save(athlete);
 
             }
-
-
+            event.setAthletes(athletes);
+            eventRepository.save(event);
         }
     }
     @Transactional(readOnly = true)
@@ -111,15 +113,10 @@ public class DataGenerationService {
     @Transactional
     public Athlete highestMedalAthlete(Events event){
         Athlete maxMedals =null;
-        List<Athlete> athletes=eventRepository.findAthletesByEvent(event);
+        List<Athlete> athletes=athleteRepository.findAthletesByEvent(event);
         for(Athlete athlete:athletes){
-            if(maxMedals ==null){
+            if(maxMedals ==null||totalMedalCount(maxMedals)<totalMedalCount(athlete)){
                 maxMedals =athlete;
-            }
-            else{
-                if(totalMedalCount(maxMedals)<totalMedalCount(athlete)){
-                    maxMedals =athlete;
-                }
             }
         }
         return maxMedals;
@@ -160,7 +157,7 @@ public class DataGenerationService {
 
     @Transactional
     public Athlete maxPointAthlete(int gender){
-        List<Athlete> athletes=new ArrayList<>();
+        List<Athlete> athletes;
         if(gender==1){
             athletes=athleteRepository.femaleAthletes();
         }
@@ -282,7 +279,7 @@ public class DataGenerationService {
     @Transactional
     public long countryGold(Country country,Events event){
         long golds=0;
-        List<Athlete> athletes=eventRepository.findAthletesByEventCountry(event,country);
+        List<Athlete> athletes=athleteRepository.findAthletesByEventCountry(event,country);
         for(Athlete athlete:athletes){
             golds+=event_itemRepository.countgoldMedals(athlete);
         }
@@ -291,7 +288,7 @@ public class DataGenerationService {
     @Transactional
     public long countrySilver(Country country,Events event){
         long silvers=0;
-        List<Athlete> athletes=eventRepository.findAthletesByEventCountry(event,country);
+        List<Athlete> athletes=athleteRepository.findAthletesByEventCountry(event,country);
         for(Athlete athlete:athletes){
             silvers+=event_itemRepository.countsilverMedals(athlete);
         }
@@ -300,7 +297,7 @@ public class DataGenerationService {
     @Transactional
     public long countryBronze(Country country,Events event){
         long bronzes =0;
-        List<Athlete> athletes=eventRepository.findAthletesByEventCountry(event,country);
+        List<Athlete> athletes=athleteRepository.findAthletesByEventCountry(event,country);
         for(Athlete athlete:athletes){
             bronzes +=event_itemRepository.countbronzeMedals(athlete);
         }
