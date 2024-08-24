@@ -153,10 +153,10 @@ public class DataGenerationService {
     }
     @Transactional
     public List<MedalTally> firstNTally(int n,Events event){
-        List<Country> countries=eventRepository.findCountryByEvent(event);
+        List<Country> countries=countryRepository.findCountryByEvent(event);
         List<MedalTally> medalTallies=new ArrayList<>();
         for(Country country:countries){
-            MedalTally c=new MedalTally(country,countryGold(country),countrySilver(country),countryBronze(country),totalPointsByCountry(country));
+            MedalTally c=new MedalTally(country,countryGold(country,event),countrySilver(country,event),countryBronze(country,event),totalPointsByCountry(country,event));
             medalTallies.add(c);
         }
         medalTallies.sort(Collections.reverseOrder());
@@ -165,6 +165,10 @@ public class DataGenerationService {
     @Transactional
     public long totalPointsByCountry(Country country){
         return 3*countryGold(country)+2*countrySilver(country)+countryBronze(country);
+    }
+    @Transactional
+    public long totalPointsByCountry(Country country,Events event){
+        return 3*countryGold(country,event)+2*countrySilver(country,event)+countryBronze(country,event);
     }
     @Transactional
     public long countryMedals(Country country){
@@ -203,8 +207,35 @@ public class DataGenerationService {
         return bronzes;
     }
     @Transactional
+    public long countryGold(Country country,Events event){
+        long golds=0;
+        List<Athlete> athletes=eventRepository.findAthletesByEventCountry(event,country);
+        for(Athlete athlete:athletes){
+            golds+=event_itemRepository.countgoldMedals(athlete);
+        }
+        return golds;
+    }
+    @Transactional
+    public long countrySilver(Country country,Events event){
+        long silvers=0;
+        List<Athlete> athletes=eventRepository.findAthletesByEventCountry(event,country);
+        for(Athlete athlete:athletes){
+            silvers+=event_itemRepository.countsilverMedals(athlete);
+        }
+        return silvers;
+    }
+    @Transactional
+    public long countryBronze(Country country,Events event){
+        long bronzes =0;
+        List<Athlete> athletes=eventRepository.findAthletesByEventCountry(event,country);
+        for(Athlete athlete:athletes){
+            bronzes +=event_itemRepository.countbronzeMedals(athlete);
+        }
+        return bronzes;
+    }
+    @Transactional
     public Country highestGold(Events event){
-        List<Country> countries=eventRepository.findCountryByEvent(event);
+        List<Country> countries=countryRepository.findCountryByEvent(event);
         Country maxGold=null;
         for(Country country:countries){
             if(maxGold==null){
@@ -220,7 +251,7 @@ public class DataGenerationService {
     }
     @Transactional
     public Country highestSilver(Events event){
-        List<Country> countries=eventRepository.findCountryByEvent(event);
+        List<Country> countries=countryRepository.findCountryByEvent(event);
         Country maxSilver =null;
         for(Country country:countries){
             if(maxSilver ==null){
@@ -236,7 +267,7 @@ public class DataGenerationService {
     }
     @Transactional
     public Country highestBronze(Events event){
-        List<Country> countries=eventRepository.findCountryByEvent(event);
+        List<Country> countries=countryRepository.findCountryByEvent(event);
         Country maxBronze =null;
         for(Country country:countries){
             if(maxBronze ==null){
