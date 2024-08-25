@@ -1,16 +1,15 @@
-# Olympic Events Management System
+# Event Management System
 
 ## Overview
 
-The Olympic Events Management System is a Java-based application that facilitates the management of Olympic events, including generating data, tracking athlete performance, and calculating medal tallies. This system leverages Spring Boot, Hibernate (JPA), and various other technologies to provide a comprehensive solution for managing and analyzing Olympic events.
+The Event Management System is a Java-based application that facilitates the management of events(eg.Olympics), including generating data, tracking athlete performance, and calculating medal tallies. This system leverages Spring Boot, Hibernate (JPA), and various other technologies to provide a comprehensive solution for managing and analyzing Olympic events.
 
 ## Features
-
-- **Data Generation**: Automatically generate and populate data for countries, athletes, events, and event items.
-- **Event Simulation**: Simulate events and track athlete performance.
-- **Medal Tallying**: Calculate and retrieve medal tallies and rankings for countries and athletes.
-- **CRUD Operations**: Perform Create, Read, Update, and Delete operations on various entities such as Countries, Athletes, Events, and Event Items.
-
+- **REST API** for managing Olympic events, athletes, and medal tallies.
+- **Data Simulation** for creating mock data of events and athletes.
+- **Medal Tally Calculation** by country and event.
+- **Database Integration** with support for Hibernate ORM.
+  
 ## Technologies Used
 
 - **Java**: Programming language used for developing the application.
@@ -18,6 +17,7 @@ The Olympic Events Management System is a Java-based application that facilitate
 - **Hibernate (JPA)**: ORM framework used for database interactions.
 - **Spring Data JPA**: Provides data access layers with repositories.
 - **Java Faker**: Library used for generating sample data.
+- **Postman** for API testing
 
 ## Setup and Configuration
 
@@ -27,16 +27,16 @@ The Olympic Events Management System is a Java-based application that facilitate
 - Maven
 - IntelliJ IDEA (or another Java IDE)
 - PostgreSQL (or any other database supported by Hibernate)
-
+- Postman For testing the API endpoints, download Postman [here](https://www.postman.com/downloads/).
+  
 ### Installation
 
 1. **Clone the Repository**
 
-    ```bash
-    git clone https://github.com/DKS2301/Olympic-Events.git
-    cd Olympic-Events
+     ```bash
+    git clone https://github.com/DKS2301/HartreeBackendProject.git
     ```
-
+    
 2. **Configure Database**
 
    Open the `src/main/resources/application.properties` file and configure your database connection:
@@ -91,13 +91,28 @@ The Olympic Events Management System is a Java-based application that facilitate
 - **`GET /functions/MT{n}`**: Retrieves the top `n` countries based on medal tally.
 - **`GET /functions/MT{n}/{eventId}`**: Retrieves the top `n` countries for a specific event based on medal tally.
 
+### Testing
+Use **Postman** to test the APIs:
+1. Open Postman and create a new request.
+2. Select the appropriate HTTP method (GET, POST, etc.).
+3. Enter the API URL (e.g., `http://localhost:8080/Sim/1`).
+4. Send the request and inspect the response.
+
+
 ## Example Usage
 
 - **Simulate an Event**: `GET http://localhost:8080/functions/Sim/1`
 - **Generate 100 Records**: `GET http://localhost:8080/functions/Gen/100`
 - **Get Top Country by Gold Medals**: `GET http://localhost:8080/functions/TopN/1`
 
+
 ## Contributing
 
 Feel free to submit issues and pull requests. Contributions are welcome!
+
+### License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Contact
+For any inquiries or issues, please contact [DKS2301](https://github.com/DKS2301).
 
