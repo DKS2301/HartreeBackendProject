@@ -49,8 +49,8 @@ public class FunctionController {
 
     //Generate random data for n events
    @GetMapping("/Gen/{n}")
-    public String generateRecords(@PathVariable int records) {
-        dataGenerationService.generateData(records);
+    public String generateRecords(@PathVariable int n) {
+        dataGenerationService.generateData(n);
         return "Data generated successfully";
    }
 
@@ -105,7 +105,7 @@ public class FunctionController {
     //Display medal tally of top n nations across all events
     @GetMapping("/MT{n}")
     public List<MedalTally> medalTally(@PathVariable int n) {
-        return dataGenerationService.firstNTally(n,null);
+        return dataGenerationService.firstNTally(n);
     }
 
     //Display medal tally of top n nations across a particular event

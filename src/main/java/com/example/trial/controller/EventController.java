@@ -31,6 +31,12 @@ public class EventController {
         return dataGenerationService.saveEvent(event);
     }
 
+    @PutMapping("/{id}")
+    public Events updateEvent(@RequestBody String name,@PathVariable Long id) {
+        Events event = dataGenerationService.getEventById(id);
+        event.setName(name);
+        return dataGenerationService.saveEvent(event);
+    }
 
     @DeleteMapping("/{id}")
     public void deleteEvent(@PathVariable long id) {
