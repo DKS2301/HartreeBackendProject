@@ -33,7 +33,7 @@ public class CountryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Country> updateCountry(@RequestBody Country country,@PathVariable String id) {
-        Country updatedCountry = dataGenerationService.updateCountry(id, country);
+        Country updatedCountry = dataGenerationService.saveCountry(dataGenerationService.getCountryById(id));
         if (updatedCountry != null) {
             return ResponseEntity.ok(updatedCountry);
         }

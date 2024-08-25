@@ -1,14 +1,12 @@
 package com.example.trial.controller;
 
-import com.example.trial.model.Athlete;
-import com.example.trial.model.Event_Item;
 import com.example.trial.model.Events;
 import com.example.trial.services.DataGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/events")

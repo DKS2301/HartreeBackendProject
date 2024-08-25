@@ -24,19 +24,19 @@ public class Event_ItemController {
     @GetMapping("/{id}")
     public Event_Item getEvent_ItemById(@PathVariable Long id) {
 
-        return dataGenerationService.getEvent_itemById(id);
+        return dataGenerationService.getEventItemById(id);
     }
 
     @PostMapping
     public Event_Item createEvent_Item(@RequestBody Event_Item eventItem) {
-        return dataGenerationService.saveEvent_item(eventItem);
+        return dataGenerationService.saveEventItem(eventItem);
     }
 
 
     @DeleteMapping("/{id}")
     public void deleteEvent_item(@PathVariable long id) {
 
-        dataGenerationService.deleteEvent_item(id);
+        dataGenerationService.deleteEventItem(id);
     }
 }
 

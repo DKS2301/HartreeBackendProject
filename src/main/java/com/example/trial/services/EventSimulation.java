@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class EventSimulation {
@@ -25,10 +22,7 @@ public class EventSimulation {
         Events event = dataGenerationService.getEventById(eventId);
         if(event!=null){
             Faker faker = new Faker();
-            //Hibernate.initialize(event.getEventItem()); // Ensure Hibernate session is active
-            //Set<Event_Item> eventItem=event.getEventItem();
             List<Event_Item> eventItem=new ArrayList<>(event.getEventItem());
-            //Event_Item item=eventItemList.get(faker.number().numberBetween(0,eventItem.size()-1));
             for(Event_Item eventItem1:eventItem){
                 Set<Athlete> athletes=eventItem1.getAthletes();
                 List<Athlete> athletesList=new ArrayList<>(athletes);
@@ -46,7 +40,7 @@ public class EventSimulation {
                 eventItem1.setGold(winnersList.get(0));
                 eventItem1.setSilver(winnersList.get(1));
                 eventItem1.setBronze(winnersList.get(2));
-                System.out.println(dataGenerationService.saveEvent_item(eventItem1));
+                System.out.println(dataGenerationService.saveEventItem(eventItem1));
             }
         }
     }

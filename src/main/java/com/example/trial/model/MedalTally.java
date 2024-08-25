@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MedalTally implements Comparable<MedalTally> {
-    Country country;
+    private Country country;
     private long gold;
     private long silver;
     private long bronze;
