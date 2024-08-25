@@ -1,11 +1,10 @@
 package com.example.trial.controller;
 
+import com.example.trial.errorhandling.ResourceNotFoundException;
 import com.example.trial.model.Athlete;
 import com.example.trial.services.DataGenerationService;
 import jakarta.transaction.Transactional;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,37 +18,37 @@ public class AthleteController {
 
     @GetMapping
     public List<Athlete> getAllAthletes() {
-        Hibernate.initialize(dataGenerationService.getAllAthletes()); // Ensure Hibernate session is active
+        if (dataGenerationService.getAllCountries().isEmpty())
+            throw new ResourceNotFoundException("No Athletes found");
         return dataGenerationService.getAllAthletes();
     }
 
     @Transactional
     @GetMapping("/{id}")
     public Athlete getAthleteById(@PathVariable Long id) {
-        Hibernate.initialize(dataGenerationService.getAthleteById(id)); // Ensure Hibernate session is active
+        if (dataGenerationService.getAthleteById(id)==null)
+            throw new ResourceNotFoundException("No Athlete found with id " + id);
         return dataGenerationService.getAthleteById(id);
     }
 
     @Transactional
     @PostMapping
     public Athlete createAthlete(@RequestBody Athlete athlete) {
-        Hibernate.initialize(dataGenerationService.saveAthlete(athlete)); // Ensure Hibernate session is active
         return dataGenerationService.saveAthlete(athlete);
     }
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<Athlete> updateCountry(@RequestBody Athlete athlete, @PathVariable Long id) {
-        Hibernate.initialize(dataGenerationService.saveAthlete(athlete)); // Ensure Hibernate session is active
-        Athlete updatedAthlete = dataGenerationService.saveAthlete(athlete);
-        if (updatedAthlete != null) {
-            return ResponseEntity.ok(updatedAthlete);
-        }
-        return ResponseEntity.notFound().build();
+    public Athlete updateAthlete(@RequestBody Athlete athlete, @PathVariable Long id) {
+        if (dataGenerationService.getAthleteById(id)==null)
+            throw new ResourceNotFoundException("No Athlete found with id " + id);
+        return dataGenerationService.saveAthlete(athlete);
     }
+
     @Transactional
     @DeleteMapping("/{id}")
     public void deleteAthlete(@PathVariable long id) {
-
+        if (dataGenerationService.getAthleteById(id)==null)
+            throw new ResourceNotFoundException("No Athlete found with id " + id);
         dataGenerationService.deleteAthlete(id);
     }
 }

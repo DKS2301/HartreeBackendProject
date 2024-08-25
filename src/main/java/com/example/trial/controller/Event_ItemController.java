@@ -1,10 +1,9 @@
 package com.example.trial.controller;
 
-import com.example.trial.model.Athlete;
+import com.example.trial.errorhandling.ResourceNotFoundException;
 import com.example.trial.model.Event_Item;
 import com.example.trial.services.DataGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,13 +16,15 @@ public class Event_ItemController {
 
     @GetMapping
     public List<Event_Item> getAllEvent_Items() {
-
+        if (dataGenerationService.getAllEventItems().isEmpty())
+            throw new ResourceNotFoundException("No event items found");
         return dataGenerationService.getAllEventItems();
     }
 
     @GetMapping("/{id}")
     public Event_Item getEvent_ItemById(@PathVariable Long id) {
-
+        if (dataGenerationService.getEventItemById(id)==null)
+            throw new ResourceNotFoundException("No Event item "+id+" found");
         return dataGenerationService.getEventItemById(id);
     }
 
@@ -35,7 +36,8 @@ public class Event_ItemController {
 
     @DeleteMapping("/{id}")
     public void deleteEvent_item(@PathVariable long id) {
-
+        if (dataGenerationService.getEventItemById(id)==null)
+            throw new ResourceNotFoundException("No Event item "+id+" found");
         dataGenerationService.deleteEventItem(id);
     }
 }

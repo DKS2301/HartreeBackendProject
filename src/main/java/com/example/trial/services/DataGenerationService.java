@@ -9,10 +9,7 @@ import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
-
-import static java.lang.Math.min;
 
 @Service
 public class DataGenerationService {
@@ -137,14 +134,24 @@ public class DataGenerationService {
     //Athlete with most points based on gender
     @Transactional
     public Athlete maxPointAthlete(int gender) {
-        List<Athlete> athletes = gender == 1 ? athleteRepository.femaleAthletes() : athleteRepository.maleAthletes();
+        List<Athlete> athletes = gender == 1 ? femaleAthletes() : maleAthletes();
         return athletes.stream().max(Comparator.comparing(this::totalPoints)).orElse(null);
+    }
+
+    @Transactional
+    public List<Athlete> femaleAthletes(){
+        return athleteRepository.femaleAthletes();
+    }
+
+    @Transactional
+    public List<Athlete> maleAthletes(){
+        return athleteRepository.maleAthletes();
     }
 
     // Ranking
     @Transactional
     public Athlete highestMedalAthlete(Events event) {
-        return athleteRepository.findAthletesByEvent(event).stream()
+        return findAthletesByEvent(event).stream()
                 .max(Comparator.comparing(this::totalMedalCount)).orElse(null);
     }
 
@@ -152,6 +159,11 @@ public class DataGenerationService {
     public Athlete highestMedalAthlete() {
         return athleteRepository.findAll().stream()
                 .max(Comparator.comparing(this::totalMedalCount)).orElse(null);
+    }
+
+    @Transactional
+    public List<Athlete> findAthletesByEvent(Events event){
+        return athleteRepository.findAthletesByEvent(event);
     }
 
     /**Country Medal Counting**/
@@ -194,6 +206,11 @@ public class DataGenerationService {
     public long countryGold(Country country, Events event) {
         return athleteRepository.findAthletesByEventCountry(event, country).stream()
                 .mapToLong(event_itemRepository::countgoldMedals).sum();
+    }
+
+    //find countries in a particular event
+    public List<Country> findCountriesByEvent(Events event){
+        return countryRepository.findCountryByEvent(event);
     }
 
     //total silver medals in a specific event
@@ -289,12 +306,8 @@ public class DataGenerationService {
                 .toList();
     }
 
-    // CRUD for Country
 
-    @Transactional
-    public Country createCountry(Country country) {
-        return countryRepository.save(country);
-    }
+    // CRUD for Country
 
     @Transactional
     public List<Country> getAllCountries() {
@@ -319,10 +332,6 @@ public class DataGenerationService {
 
     // CRUD for Athlete
 
-    @Transactional
-    public Athlete createAthlete(Athlete athlete) {
-        return athleteRepository.save(athlete);
-    }
 
     @Transactional
     public List<Athlete> getAllAthletes() {
@@ -347,10 +356,6 @@ public class DataGenerationService {
 
     // CRUD Operations for Events
 
-    @Transactional
-    public Events createEvent(Events event) {
-        return eventRepository.save(event);
-    }
 
     @Transactional
     public List<Events> getAllEvents() {
@@ -375,10 +380,6 @@ public class DataGenerationService {
 
     // CRUD Operations for Event_Item
 
-    @Transactional
-    public Event_Item createEventItem(Event_Item eventItem) {
-        return event_itemRepository.save(eventItem);
-    }
 
     @Transactional
     public List<Event_Item> getAllEventItems() {

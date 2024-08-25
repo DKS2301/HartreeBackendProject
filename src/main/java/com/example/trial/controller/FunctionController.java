@@ -1,5 +1,7 @@
 package com.example.trial.controller;
 
+import com.example.trial.errorhandling.BadRequestException;
+import com.example.trial.errorhandling.ResourceNotFoundException;
 import com.example.trial.model.Athlete;
 import com.example.trial.model.Country;
 import com.example.trial.model.Events;
@@ -41,7 +43,9 @@ public class FunctionController {
     //Simulate an event identified by event id
     @GetMapping("/Sim/{id}")
     public Events simulateEventById(@PathVariable Long id) {
-
+        if(dataGenerationService.getEventById(id)==null){
+            throw new ResourceNotFoundException("The Event id "+id+" does not exist");
+        }
         eventSimulation.createEventSimulation(id);
         return dataGenerationService.getEventById(id);
     }
@@ -49,6 +53,8 @@ public class FunctionController {
     //Generate random data for n events
    @GetMapping("/Gen/{n}")
     public String generateRecords(@PathVariable int n) {
+        if(n<=0)
+            throw new BadRequestException("Number of Events should be greater than 0");
         dataGenerationService.generateData(n);
         return "Data generated successfully";
    }
@@ -56,60 +62,86 @@ public class FunctionController {
    //Retrieve the top nation based on category
    @GetMapping("/TopN/{category}")
     public Country topNation(@PathVariable int category) {
+        if(dataGenerationService.getAllCountries().isEmpty())
+            throw new BadRequestException("No countries found");
        return switch (category) {
            case 1 -> dataGenerationService.highestGold();
            case 2 -> dataGenerationService.highestSilver();
            case 3 -> dataGenerationService.highestBronze();
            case 4 -> dataGenerationService.highestPointsByCountry();
-           default -> null;
+           default -> throw new BadRequestException("Invalid category");
        };
    }
 
    //Retrieve the lowest nation based on category
    @GetMapping("/LowN/{category}")
     public Country lowestNation(@PathVariable int category) {
+       if(dataGenerationService.getAllCountries().isEmpty())
+           throw new BadRequestException("No countries found");
        return switch (category) {
            case 1 -> dataGenerationService.lowestGold();
            case 2 -> dataGenerationService.lowestSilver();
            case 3 -> dataGenerationService.lowestBronze();
            case 4 -> dataGenerationService.lowestPointsByCountry();
-           default -> null;
+           default ->throw new BadRequestException("Invalid category");
        };
    }
 
    //Retrieve the athlete with most medals
    @GetMapping("/HMA")
     public Athlete highestMedalAthlete() {
-        return dataGenerationService.highestMedalAthlete(null);
+        if(dataGenerationService.getAllAthletes().isEmpty())
+            throw new ResourceNotFoundException("No athletes found");
+        return dataGenerationService.highestMedalAthlete();
    }
 
    //Retrieve the athlete with most medals in a particular event
    @GetMapping("/HMA/{eventId}")
     public Athlete highestMedalAthlete(@PathVariable Long eventId) {
-        return dataGenerationService.highestMedalAthlete(dataGenerationService.getEventById(eventId));
+        Events e=dataGenerationService.getEventById(eventId);
+        if (e==null)
+            throw new ResourceNotFoundException("No event with id "+eventId+" found");
+        else if(dataGenerationService.findAthletesByEvent(e).isEmpty())
+            throw new ResourceNotFoundException("No athletes found for event with id "+eventId);
+        return dataGenerationService.highestMedalAthlete(e);
    }
 
    //Retrieve the athlete with most point
    @GetMapping("/HPA")
     public Athlete maxPointsAthlete() {
-            return dataGenerationService.maxPointAthlete();
+        if(dataGenerationService.getAllAthletes().isEmpty())
+            throw new ResourceNotFoundException("No athletes found");
+        return dataGenerationService.maxPointAthlete();
    }
 
    //Retrieve the athlete with most point based on gender
     @GetMapping("/HPA/{gender}")
     public Athlete maxPointsAthlete(@PathVariable Integer gender) {
-        return dataGenerationService.maxPointAthlete(gender);
+        if(gender==1||gender==2) {
+            if (gender == 1 ? dataGenerationService.femaleAthletes().isEmpty() : dataGenerationService.maleAthletes().isEmpty())
+                throw new ResourceNotFoundException("No " + (gender == 1 ? "Female" : "Male") + " athletes found");
+
+            return dataGenerationService.maxPointAthlete(gender);
+        }
+        throw new BadRequestException("Invalid gender");
     }
 
     //Display medal tally of top n nations across all events
     @GetMapping("/MT{n}")
     public List<MedalTally> medalTally(@PathVariable int n) {
+        if(dataGenerationService.getAllCountries().isEmpty())
+            throw new ResourceNotFoundException("No countries found");
         return dataGenerationService.firstNTally(n);
     }
 
     //Display medal tally of top n nations across a particular event
     @GetMapping("/MT{n}/{eventId}")
     public List<MedalTally> medalTally(@PathVariable int n,@PathVariable long eventId) {
+        Events e=dataGenerationService.getEventById(eventId);
+        if(e==null)
+            throw new ResourceNotFoundException("No such event with event id "+eventId);
+        else if(dataGenerationService.findCountriesByEvent(e).isEmpty())
+            throw new ResourceNotFoundException("No countries found in event "+eventId);
         return dataGenerationService.firstNTally(n,dataGenerationService.getEventById(eventId));
     }
 }

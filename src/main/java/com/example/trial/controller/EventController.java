@@ -1,5 +1,6 @@
 package com.example.trial.controller;
 
+import com.example.trial.errorhandling.ResourceNotFoundException;
 import com.example.trial.model.Events;
 import com.example.trial.services.DataGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +15,16 @@ public class EventController {
 
     @GetMapping
     public List<Events> getAllEvents() {
-
+        if(dataGenerationService.getAllEvents().isEmpty()) {
+           throw new ResourceNotFoundException("No events found");
+        }
         return dataGenerationService.getAllEvents();
     }
 
     @GetMapping("/{id}")
     public Events getEventById(@PathVariable Long id) {
-
+        if(dataGenerationService.getEventById(id)==null)
+            throw new ResourceNotFoundException("No events with id "+id+" found");
         return dataGenerationService.getEventById(id);
     }
 
@@ -31,6 +35,8 @@ public class EventController {
 
     @PutMapping("/{id}")
     public Events updateEvent(@RequestBody String name,@PathVariable Long id) {
+        if (dataGenerationService.getEventById(id)==null)
+            throw new ResourceNotFoundException("No events with id "+id+" found");
         Events event = dataGenerationService.getEventById(id);
         event.setName(name);
         return dataGenerationService.saveEvent(event);
@@ -38,6 +44,8 @@ public class EventController {
 
     @DeleteMapping("/{id}")
     public void deleteEvent(@PathVariable long id) {
+        if (dataGenerationService.getEventById(id)==null)
+            throw new ResourceNotFoundException("No events with id "+id+" found");
         dataGenerationService.deleteEvent(id);
     }
 }
