@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -26,7 +24,7 @@ public class Event_Item {
     private Events event;
 
     @ManyToOne
-    @JoinColumn(name="registration")
+    @JoinColumn(name="athlete_event_item ")
     private Athlete gold;
     @ManyToOne
     @JoinColumn(name="athlete_silver_id")
