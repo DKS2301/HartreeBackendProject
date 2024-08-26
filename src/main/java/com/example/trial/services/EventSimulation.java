@@ -4,7 +4,6 @@ import com.example.trial.model.Athlete;
 import com.example.trial.model.Event_Item;
 import com.example.trial.model.Events;
 import com.github.javafaker.Faker;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

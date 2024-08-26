@@ -5,7 +5,6 @@ import com.example.trial.model.Athlete;
 import com.example.trial.model.Event_Item;
 import com.example.trial.model.Events;
 import com.example.trial.services.DataGenerationService;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

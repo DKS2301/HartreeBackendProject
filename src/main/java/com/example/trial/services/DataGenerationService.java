@@ -512,11 +512,6 @@ public class DataGenerationService {
 
 
     @Transactional
-    public List<Event_Item> getAllEventItems() {
-        return event_itemRepository.findAll();
-    }
-
-    @Transactional
     public List<Event_Item> getAllEventItemsByEvent(Events event) {
         return event_itemRepository.findByEvent(event);
     }
