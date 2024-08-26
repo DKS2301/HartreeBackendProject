@@ -1,5 +1,4 @@
 package com.example.trial.services;
-
 import com.example.trial.model.*;
 import com.example.trial.repository.AthleteRepository;
 import com.example.trial.repository.CountryRepository;
@@ -28,29 +27,23 @@ public class DataGenerationService {
 
     // Random Data Generation
     @Transactional
-    public void generateData(int numberOfRecords) {
+    public void generateData(Events event) {
         Faker faker = new Faker();
-        for (int i = 0; i < numberOfRecords; i++) {
-            // Generate event
-            Events event = new Events();
-            event.setName(faker.lorem().word());
+        // Generate countries
+        Set<Country> countries = generateCountries(faker);
+        event.setCountries(countries);
+        eventRepository.save(event);
 
-            // Generate countries
-            Set<Country> countries = generateCountries(faker);
-            event.setCountries(countries);
-            eventRepository.save(event);
+        // Generate event items
+        Set<Event_Item> items = generateEventItems(faker, event);
+        event_itemRepository.saveAll(items);
 
-            // Generate event items
-            Set<Event_Item> items = generateEventItems(faker, event);
-            event_itemRepository.saveAll(items);
+        // Generate athletes
+        Set<Athlete> athletes = generateAthletes(faker, items, countries);
+        athleteRepository.saveAll(athletes);
 
-            // Generate athletes
-            Set<Athlete> athletes = generateAthletes(faker, items, countries);
-            athleteRepository.saveAll(athletes);
-
-            event.setAthletes(athletes);
-            eventRepository.save(event);
-        }
+        event.setAthletes(athletes);
+        eventRepository.save(event);
     }
     //Generate random countries
     private Set<Country> generateCountries(Faker faker) {
@@ -65,6 +58,7 @@ public class DataGenerationService {
     }
 
     //Generate Event Items
+
     private Set<Event_Item> generateEventItems(Faker faker, Events event) {
         String[] eventItems = {"100m Sprint", "200m Sprint", "400m Sprint", "800m Run", "1500m Run", "5000m Run", "10000m Run", "Marathon", "110m Hurdles", "400m Hurdles", "4x100m Relay", "4x400m Relay", "High Jump", "Pole Vault", "Long Jump", "Triple Jump", "Shot Put", "Discus Throw", "Javelin Throw", "Hammer Throw", "Decathlon"};
         Set<String> selectedEvents = new HashSet<>();
@@ -77,6 +71,7 @@ public class DataGenerationService {
             Event_Item item = new Event_Item();
             item.setEvent_name(eventName);
             item.setEvent(event);
+            item.setCompleted(false);
             items.add(item);
         }
         return items;
@@ -131,7 +126,19 @@ public class DataGenerationService {
                 .max(Comparator.comparing(this::totalPoints)).orElse(null);
     }
 
+    @Transactional
+    public Athlete maxPointAthlete(Events event) {
+        return athleteRepository.findAthletesByEvent(event).stream()
+                .max(Comparator.comparing(this::totalPoints)).orElse(null);
+    }
+
     //Athlete with most points based on gender
+    @Transactional
+    public Athlete maxPointAthlete(int gender,Events event) {
+        List<Athlete> athletes = gender == 1 ? femaleAthletesByEvent(event) : maleAthletesByEvent(event);
+        return athletes.stream().max(Comparator.comparing(this::totalPoints)).orElse(null);
+    }
+
     @Transactional
     public Athlete maxPointAthlete(int gender) {
         List<Athlete> athletes = gender == 1 ? femaleAthletes() : maleAthletes();
@@ -144,8 +151,18 @@ public class DataGenerationService {
     }
 
     @Transactional
+    public List<Athlete> femaleAthletesByEvent(Events event){
+        return athleteRepository.femaleAthletesByEvent(event);
+    }
+
+    @Transactional
     public List<Athlete> maleAthletes(){
         return athleteRepository.maleAthletes();
+    }
+
+    @Transactional
+    public List<Athlete> maleAthletesByEvent(Events event){
+        return athleteRepository.maleAthletesByEvent(event);
     }
 
     // Ranking
@@ -237,11 +254,35 @@ public class DataGenerationService {
                 .max(Comparator.comparing(this::totalPointsByCountry)).orElse(null);
     }
 
+    @Transactional
+    public Country highestPointsByCountry(Events event) {
+        List<Country> countries=findCountriesByEvent(event);
+        Country highest=null;
+        for(Country c:countries){
+            if(highest==null||totalPointsByCountry(c,event)>totalPointsByCountry(highest,event)){
+                highest=c;
+            }
+        }
+        return highest;
+    }
+
     //Country with least points
     @Transactional
     public Country lowestPointsByCountry() {
         return countryRepository.findAll().stream()
                 .min(Comparator.comparing(this::totalPointsByCountry)).orElse(null);
+    }
+
+    @Transactional
+    public Country lowestPointsByCountry(Events event) {
+        List<Country> countries=findCountriesByEvent(event);
+        Country lowest =null;
+        for(Country c:countries){
+            if(lowest ==null||totalPointsByCountry(c,event)<totalPointsByCountry(lowest,event)){
+                lowest =c;
+            }
+        }
+        return lowest;
     }
 
     //Most gold
@@ -251,11 +292,35 @@ public class DataGenerationService {
                 .max(Comparator.comparing(this::countryGold)).orElse(null);
     }
 
+    @Transactional
+    public Country highestGold(Events event) {
+        List<Country> countries=findCountriesByEvent(event);
+        Country highestgold =null;
+        for(Country c:countries){
+            if(highestgold ==null||totalPointsByCountry(c,event)>totalPointsByCountry(highestgold,event)){
+                highestgold =c;
+            }
+        }
+        return highestgold;
+    }
+
     //Least gold
     @Transactional
     public Country lowestGold() {
         return countryRepository.findAll().stream()
                 .min(Comparator.comparing(this::countryGold)).orElse(null);
+    }
+
+    @Transactional
+    public Country lowestGold(Events event) {
+        List<Country> countries=findCountriesByEvent(event);
+        Country lowestGold =null;
+        for(Country c:countries){
+            if(lowestGold ==null||totalPointsByCountry(c,event)<totalPointsByCountry(lowestGold,event)){
+                lowestGold =c;
+            }
+        }
+        return lowestGold;
     }
 
     //Most silver
@@ -265,11 +330,35 @@ public class DataGenerationService {
                 .max(Comparator.comparing(this::countrySilver)).orElse(null);
     }
 
+    @Transactional
+    public Country highestSilver(Events event) {
+        List<Country> countries=findCountriesByEvent(event);
+        Country highestSilver =null;
+        for(Country c:countries){
+            if(highestSilver ==null||totalPointsByCountry(c,event)<totalPointsByCountry(highestSilver,event)){
+                highestSilver =c;
+            }
+        }
+        return highestSilver;
+    }
+
     //Least silver
     @Transactional
     public Country lowestSilver() {
         return countryRepository.findAll().stream()
                 .min(Comparator.comparing(this::countrySilver)).orElse(null);
+    }
+
+    @Transactional
+    public Country lowestSilver(Events event) {
+        List<Country> countries=findCountriesByEvent(event);
+        Country lowestSilver =null;
+        for(Country c:countries){
+            if(lowestSilver ==null||totalPointsByCountry(c,event)<totalPointsByCountry(lowestSilver,event)){
+                lowestSilver =c;
+            }
+        }
+        return lowestSilver;
     }
 
     //Most bronze
@@ -279,11 +368,35 @@ public class DataGenerationService {
                 .max(Comparator.comparing(this::countryBronze)).orElse(null);
     }
 
+    @Transactional
+    public Country highestBronze(Events event) {
+        List<Country> countries=findCountriesByEvent(event);
+        Country bronze =null;
+        for(Country c:countries){
+            if(bronze ==null||totalPointsByCountry(c,event)<totalPointsByCountry(bronze,event)){
+                bronze =c;
+            }
+        }
+        return bronze;
+    }
+
     //Least bronze
     @Transactional
     public Country lowestBronze() {
         return countryRepository.findAll().stream()
                 .min(Comparator.comparing(this::countryBronze)).orElse(null);
+    }
+
+    @Transactional
+    public Country lowestBronze(Events event) {
+        List<Country> countries=findCountriesByEvent(event);
+        Country lowestBronze =null;
+        for(Country c:countries){
+            if(lowestBronze ==null||totalPointsByCountry(c,event)<totalPointsByCountry(lowestBronze,event)){
+                lowestBronze =c;
+            }
+        }
+        return lowestBronze;
     }
 
     //Medal tally of first n nations across all events
@@ -320,6 +433,11 @@ public class DataGenerationService {
     }
 
     @Transactional
+    public Country getCountryByEventId(String id,Events event){
+        return countryRepository.findCountriesByIdEvent(id,event);
+    }
+
+    @Transactional
     public Country saveCountry(Country country) {
         return countryRepository.save(country);
     }
@@ -353,6 +471,10 @@ public class DataGenerationService {
         athleteRepository.deleteById(id);
     }
 
+    @Transactional
+    public Athlete getAthleteByEventId(Events event,long id){
+        return athleteRepository.findAthletesByEvent(event,id);
+    }
 
     // CRUD Operations for Events
 
@@ -363,9 +485,17 @@ public class DataGenerationService {
     }
 
     @Transactional
+    public Events getEventByName(String name) {
+        return eventRepository.findByName(name);
+    }
+
+    @Transactional
     public Events getEventById(Long id) {
         return eventRepository.findById(id).orElse(null);
     }
+
+
+
 
     @Transactional
     public Events saveEvent(Events updatedEvent) {
@@ -386,6 +516,21 @@ public class DataGenerationService {
         return event_itemRepository.findAll();
     }
 
+    @Transactional
+    public List<Event_Item> getAllEventItemsByEvent(Events event) {
+        return event_itemRepository.findByEvent(event);
+    }
+
+    @Transactional
+    public Event_Item getEventItemById(Long id,Events event) {
+
+        return event_itemRepository.findByEvent(id,event);
+    }
+
+    @Transactional
+    public List<Athlete> getAthleteesByEventItem(Events event,Event_Item item){
+        return event_itemRepository.findAthletesByEventItem(event,item);
+    }
     @Transactional
     public Event_Item getEventItemById(Long id) {
         return event_itemRepository.findById(id).orElse(null);

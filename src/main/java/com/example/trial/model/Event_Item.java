@@ -15,7 +15,7 @@ public class Event_Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private boolean completed;
     private String event_name;
     @ManyToMany(mappedBy = "eventItems")
     @JsonIgnore
@@ -26,7 +26,7 @@ public class Event_Item {
     private Events event;
 
     @ManyToOne
-    @JoinColumn(name="athlete_gold_id")
+    @JoinColumn(name="registration")
     private Athlete gold;
     @ManyToOne
     @JoinColumn(name="athlete_silver_id")

@@ -13,4 +13,7 @@ import java.util.List;
 public interface CountryRepository extends JpaRepository<Country,String> {
     @Query("SELECT c from Country c JOIN c.event e where e=:event")
     List<Country> findCountryByEvent(@Param("event") Events event);
+
+    @Query("select c from Country c join c.event e where c.iso_code=:id and e=:event")
+    Country findCountriesByIdEvent(@Param("id") String id, @Param("event") Events event);
 }

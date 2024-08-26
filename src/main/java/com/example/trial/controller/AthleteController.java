@@ -1,7 +1,8 @@
 package com.example.trial.controller;
 
-import com.example.trial.errorhandling.ResourceNotFoundException;
+import com.example.trial.Exceptions.ResourceNotFoundException;
 import com.example.trial.model.Athlete;
+import com.example.trial.model.Events;
 import com.example.trial.services.DataGenerationService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,23 +11,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/athletes")
+@RequestMapping("events/{name}/athletes")
 public class AthleteController {
     @Autowired
     private DataGenerationService dataGenerationService;
     @Transactional
 
     @GetMapping
-    public List<Athlete> getAllAthletes() {
-        if (dataGenerationService.getAllCountries().isEmpty())
+    public List<Athlete> getAllAthletes(@PathVariable String name) {
+        Events event = dataGenerationService.getEventByName(name);
+        if(event ==null)
+            throw new ResourceNotFoundException("No events found for name " + name);
+        if (dataGenerationService.findAthletesByEvent(event).isEmpty())
             throw new ResourceNotFoundException("No Athletes found");
-        return dataGenerationService.getAllAthletes();
+        return dataGenerationService.findAthletesByEvent(event);
     }
 
     @Transactional
     @GetMapping("/{id}")
-    public Athlete getAthleteById(@PathVariable Long id) {
-        if (dataGenerationService.getAthleteById(id)==null)
+    public Athlete getAthleteById(@PathVariable Long id,@PathVariable String name) {
+        Events event = dataGenerationService.getEventByName(name);
+        if(event ==null)
+            throw new ResourceNotFoundException("No events found for name " + name);
+        if (dataGenerationService.getAthleteByEventId(event,id)==null)
             throw new ResourceNotFoundException("No Athlete found with id " + id);
         return dataGenerationService.getAthleteById(id);
     }

@@ -13,5 +13,5 @@ import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Events, Long> {
 
-
+    Events findByName(String name);
 }

@@ -1,7 +1,8 @@
 package com.example.trial.controller;
 
-import com.example.trial.errorhandling.ResourceNotFoundException;
+import com.example.trial.Exceptions.ResourceNotFoundException;
 import com.example.trial.model.Country;
+import com.example.trial.model.Events;
 import com.example.trial.services.DataGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,22 +10,26 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/countries")
+@RequestMapping("events/{name}/countries")
 public class CountryController {
     @Autowired
     private DataGenerationService dataGenerationService;
 
     @GetMapping
-    public List<Country> getAllCountries() {
-        if (dataGenerationService.getAllCountries().isEmpty())
+    public List<Country> getAllCountries(@PathVariable String name) {
+        Events events = dataGenerationService.getEventByName(name);
+        if (dataGenerationService.findCountriesByEvent(events).isEmpty())
             throw new ResourceNotFoundException("No countries found");
-        return dataGenerationService.getAllCountries();
+        return dataGenerationService.findCountriesByEvent(events);
     }
 
 
     @GetMapping("/{id}")
-    public Country getCountryById(@PathVariable String id) {
-        if (dataGenerationService.getCountryById(id)==null)
+    public Country getCountryById(@PathVariable String id,@PathVariable String name) {
+        Events event = dataGenerationService.getEventByName(name);
+        if (event==null)
+            throw new ResourceNotFoundException("No such event found");
+        if (dataGenerationService.getCountryByEventId(id,event)==null)
             throw new ResourceNotFoundException("Country with iso code "+id+" was not found");
         return dataGenerationService.getCountryById(id);
     }
