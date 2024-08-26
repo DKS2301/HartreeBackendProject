@@ -66,30 +66,285 @@ The Event Management System is a Java-based application that facilitates the man
 
 ## API Endpoints
 
-### Event Simulation
+# API Endpoints Documentation
 
-- **`GET /functions/Sim/{id}`**: Simulates the event with the given `id`.
+## Event Simulation and Management
 
-### Data Generation
+### Simulate Event by Item ID
+- **URL**: `/events/{name}/Sim/{id}`
+- **Method**: `GET`
+- **Description**: Simulate an event for a specific event item by its ID.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ID of the event item.
 
-- **`GET /functions/Gen/{records}`**: Generates a specified number of records.
+### Simulate Event
+- **URL**: `/events/{name}/Sim`
+- **Method**: `GET`
+- **Description**: Simulate an event for all event items associated with the specified event.
+- **Path Variable**:
+  - `name`: Name of the event.
 
-### Medal Tallies
+### Generate Records
+- **URL**: `/events/{name}/Gen`
+- **Method**: `GET`
+- **Description**: Generate sample records for a specified event.
+- **Path Variable**:
+  - `name`: Name of the event.
 
-- **`GET /functions/TopN/{category}`**: Retrieves the country with the highest points for the given category (1: gold, 2: silver, 3: bronze, 4: total points).
-- **`GET /functions/LowN/{category}`**: Retrieves the country with the lowest points for the given category.
+### Top Nations
+- **URL**: `/events/TopN/{category}`
+- **Method**: `GET`
+- **Description**: Retrieve the top nation based on the specified category across all events.
+- **Path Variable**:
+  - `category`: Category for sorting (1: Gold, 2: Silver, 3: Bronze, 4: Points).
 
-### Athlete Performance
+### Top Nations by Event
+- **URL**: `/events/{name}/TopN/{category}`
+- **Method**: `GET`
+- **Description**: Retrieve the top nation for a specific event based on the specified category.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `category`: Category for sorting (1: Gold, 2: Silver, 3: Bronze, 4: Points).
 
-- **`GET /functions/HMA`**: Retrieves the athlete with the highest number of medals across all events.
-- **`GET /functions/HMA/{eventId}`**: Retrieves the athlete with the highest number of medals for a specific event.
-- **`GET /functions/HPA`**: Retrieves the athlete with the maximum points across all events.
-- **`GET /functions/HPA/{gender}`**: Retrieves the athlete with the maximum points filtered by gender (1: female, 2: male).
+### Lowest Nations
+- **URL**: `/events/LowN/{category}`
+- **Method**: `GET`
+- **Description**: Retrieve the lowest nation based on the specified category across all events.
+- **Path Variable**:
+  - `category`: Category for sorting (1: Gold, 2: Silver, 3: Bronze, 4: Points).
 
-### Medal Tally by Country
+### Lowest Nations by Event
+- **URL**: `/events/{name}/LowN/{category}`
+- **Method**: `GET`
+- **Description**: Retrieve the lowest nation for a specific event based on the specified category.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `category`: Category for sorting (1: Gold, 2: Silver, 3: Bronze, 4: Points).
 
-- **`GET /functions/MT{n}`**: Retrieves the top `n` countries based on medal tally.
-- **`GET /functions/MT{n}/{eventId}`**: Retrieves the top `n` countries for a specific event based on medal tally.
+### Highest Medal Athlete
+- **URL**: `/events/HMA`
+- **Method**: `GET`
+- **Description**: Retrieve the athlete with the highest number of medals across all events.
+
+### Highest Medal Athlete by Event
+- **URL**: `/events/{name}/HMA`
+- **Method**: `GET`
+- **Description**: Retrieve the athlete with the highest number of medals for a specific event.
+- **Path Variable**:
+  - `name`: Name of the event.
+
+### Highest Points Athlete
+- **URL**: `/events/HPA`
+- **Method**: `GET`
+- **Description**: Retrieve the athlete with the highest points across all events.
+
+### Highest Points Athlete by Gender
+- **URL**: `/events/HPA/{gender}`
+- **Method**: `GET`
+- **Description**: Retrieve the athlete with the highest points by gender.
+- **Path Variable**:
+  - `gender`: Gender of the athlete (1: Female, 2: Male).
+
+### Highest Points Athlete by Event
+- **URL**: `/events/{name}/HPA`
+- **Method**: `GET`
+- **Description**: Retrieve the athlete with the highest points for a specific event.
+- **Path Variable**:
+  - `name`: Name of the event.
+
+### Highest Points Athlete by Event and Gender
+- **URL**: `/events/{name}/HPA/{gender}`
+- **Method**: `GET`
+- **Description**: Retrieve the athlete with the highest points for a specific event and gender.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `gender`: Gender of the athlete (1: Female, 2: Male).
+
+### Medal Tally
+- **URL**: `/events/MT{n}`
+- **Method**: `GET`
+- **Description**: Retrieve the top `n` medal tallies across all events.
+- **Path Variable**:
+  - `n`: Number of top medal tallies to retrieve.
+
+### Medal Tally by Event
+- **URL**: `/events/{name}/MT{n}`
+- **Method**: `GET`
+- **Description**: Retrieve the top `n` medal tallies for a specific event.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `n`: Number of top medal tallies to retrieve.
+
+## Event Management
+
+### Get All Events
+- **URL**: `/events/ALlEvents`
+- **Method**: `GET`
+- **Description**: Retrieve a list of all events.
+
+### Get Event by Name
+- **URL**: `/events/ALlEvents/{name}`
+- **Method**: `GET`
+- **Description**: Retrieve a specific event by its name.
+- **Path Variable**:
+  - `name`: Name of the event.
+
+### Create Event
+- **URL**: `/events/ALlEvents/addNew`
+- **Method**: `POST`
+- **Description**: Create a new event.
+- **Request Body**: JSON object containing the event name.
+
+### Update Event
+- **URL**: `/events/ALlEvents/{id}`
+- **Method**: `PUT`
+- **Description**: Update the name of an existing event.
+- **Path Variable**:
+  - `id`: ID of the event.
+- **Request Body**: JSON object containing the new event name.
+
+### Delete Event
+- **URL**: `/events/ALlEvents/{id}`
+- **Method**: `DELETE`
+- **Description**: Delete an event by its ID.
+- **Path Variable**:
+  - `id`: ID of the event.
+
+## Country Management
+
+### Get All Countries
+- **URL**: `/events/{name}/countries`
+- **Method**: `GET`
+- **Description**: Retrieve a list of all countries associated with a specific event.
+- **Path Variable**:
+  - `name`: Name of the event.
+
+### Get Country by ID
+- **URL**: `/events/{name}/countries/{id}`
+- **Method**: `GET`
+- **Description**: Retrieve a specific country by its ISO code for a specific event.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ISO code of the country.
+
+### Create Country
+- **URL**: `/events/{name}/countries`
+- **Method**: `POST`
+- **Description**: Create a new country.
+- **Path Variable**:
+  - `name`: Name of the event.
+- **Request Body**: JSON object containing country details.
+
+### Update Country
+- **URL**: `/events/{name}/countries/{id}`
+- **Method**: `PUT`
+- **Description**: Update the details of a country.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ISO code of the country.
+- **Request Body**: JSON object containing updated country details.
+
+### Delete Country
+- **URL**: `/events/{name}/countries/{id}`
+- **Method**: `DELETE`
+- **Description**: Delete a country by its ISO code.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ISO code of the country.
+
+## Event Item Management
+
+### Get All Event Items
+- **URL**: `/events/{name}/eventItems`
+- **Method**: `GET`
+- **Description**: Retrieve a list of all event items associated with a specific event.
+- **Path Variable**:
+  - `name`: Name of the event.
+
+### Get Event Item by ID
+- **URL**: `/events/{name}/eventItems/{id}`
+- **Method**: `GET`
+- **Description**: Retrieve a specific event item by its ID.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ID of the event item.
+
+### Get Winners by Event Item ID
+- **URL**: `/events/{name}/eventItems/{id}/Winners`
+- **Method**: `GET`
+- **Description**: Retrieve the winners (gold, silver, bronze) for a specific event item.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ID of the event item.
+
+### Create Event Item
+- **URL**: `/events/{name}/eventItems`
+- **Method**: `POST`
+- **Description**: Create a new event item for a specific event.
+- **Path Variable**:
+  - `name`: Name of the event.
+- **Request Body**: JSON object containing event item details.
+
+### Delete Event Item
+- **URL**: `/events/{name}/eventItems/{id}`
+- **Method**: `DELETE`
+- **Description**: Delete an event item by its ID.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ID of the event item.
+
+## Athlete Management
+
+### Get All Athletes
+- **URL**: `/events/{name}/athletes`
+- **Method**: `GET`
+- **Description**: Retrieve a list of all athletes participating in a specific event.
+- **Path Variable**:
+  - `name`: Name of the event.
+
+### Get Athlete by ID
+- **URL**: `/events/{name}/athletes/{id}`
+- **Method**: `GET`
+- **Description**: Retrieve a specific athlete by their ID.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ID of the athlete.
+
+### Create Athlete
+- **URL**: `/events/{name}/athletes`
+- **Method**: `POST`
+- **Description**: Create a new athlete for a specific event.
+- **Path Variable**:
+  - `name`: Name of the event.
+- **Request Body**: JSON object containing athlete details.
+
+### Delete Athlete
+- **URL**: `/events/{name}/athletes/{id}`
+- **Method**: `DELETE`
+- **Description**: Delete an athlete by their ID.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ID of the athlete.
+
+## Additional Endpoints
+
+### Get Medal Tally by Country and Event
+- **URL**: `/events/{name}/countries/{id}/tally`
+- **Method**: `GET`
+- **Description**: Retrieve the medal tally for a specific country and event.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ISO code of the country.
+
+### Get Event Item Records
+- **URL**: `/events/{name}/eventItems/{id}/records`
+- **Method**: `GET`
+- **Description**: Retrieve records of an event item by its ID.
+- **Path Variables**:
+  - `name`: Name of the event.
+  - `id`: ID of the event item.
+
 
 ### Testing
 Use **Postman** to test the APIs:
