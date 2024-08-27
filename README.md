@@ -2,14 +2,14 @@
 
 ## Overview
 
-The Event Management System is a Java-based application that facilitates the management of events(eg.Olympics), including generating data, tracking athlete performance, and calculating medal tallies. This system leverages Spring Boot, Hibernate (JPA), and various other technologies to provide a comprehensive solution for managing and analyzing Olympic events.
+The Event Management System is a Java-based application that facilitates the management of events (e.g., Olympics), including generating data, tracking athlete performance, and calculating medal tallies. This system leverages Spring Boot, Hibernate (JPA), and various other technologies to provide a comprehensive solution for managing and analyzing Olympic events.
 
 ## Features
 - **REST API** for managing Olympic events, athletes, and medal tallies.
 - **Data Simulation** for creating mock data of events and athletes.
 - **Medal Tally Calculation** by country and event.
 - **Database Integration** with support for Hibernate ORM.
-  
+
 ## Technologies Used
 
 - **Java**: Programming language used for developing the application.
@@ -17,7 +17,9 @@ The Event Management System is a Java-based application that facilitates the man
 - **Hibernate (JPA)**: ORM framework used for database interactions.
 - **Spring Data JPA**: Provides data access layers with repositories.
 - **Java Faker**: Library used for generating sample data.
-- **Postman** for API testing
+- **Postman**: For API testing
+- **Docker**: For containerizing the application
+- **Docker Compose**: For defining and running multi-container Docker applications
 
 ## Setup and Configuration
 
@@ -25,362 +27,212 @@ The Event Management System is a Java-based application that facilitates the man
 
 - Java 11 or higher
 - Maven
-- IntelliJ IDEA (or another Java IDE)
-- PostgreSQL (or any other database supported by Hibernate)
+- Docker and Docker Compose
 - Postman For testing the API endpoints, download Postman [here](https://www.postman.com/downloads/).
-  
-### Installation
+
+### Dockerizing the Application
 
 1. **Clone the Repository**
 
-     ```bash
+    ```bash
     git clone https://github.com/DKS2301/HartreeBackendProject.git
-    ```
-    
-2. **Configure Database**
-
-   Open the `src/main/resources/application.properties` file and configure your database connection:
-
-    ```properties
-    spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
-    spring.datasource.username=your_username
-    spring.datasource.password=your_password
-    spring.jpa.hibernate.ddl-auto=update
+    cd HartreeBackendProject
     ```
 
-3. **Build the Project**
+2. **Build and Run with Docker Compose**
 
-    Run the following Maven command to build the project:
+    Run Docker Compose to build and start the application and database:
 
     ```bash
-    mvn clean install
+    docker-compose up --build
     ```
 
-4. **Run the Application**
+    This command will:
+    - Build the Docker images for your Spring Boot application and PostgreSQL database.
+    - Start the containers with the specified configuration.
 
-    You can run the application from IntelliJ IDEA or using the Maven command:
+3. **Accessing the Application**
+
+    - **Spring Boot Application**: Access the application at `http://localhost:8080`.
+    - **PostgreSQL Database**: Connect to the database at `localhost:5432` using the credentials `postgres`/`yourpassword` and database name `Eventsdb`.
+
+4. **Stopping and Removing Containers**
+
+    To stop and remove the containers, use:
 
     ```bash
-    mvn spring-boot:run
+    docker-compose down
     ```
-
-### Building and running your application
-
-When you're ready, start your application by running:
-`docker compose up --build`.
-
-Your application will be available at http://localhost:8080.
-
-### Deploying your application to the cloud
-
-First, build your image, e.g.: `docker build -t myapp .`.
-If your cloud uses a different CPU architecture than your development
-machine (e.g., you are on a Mac M1 and your cloud provider is amd64),
-you'll want to build the image for that platform, e.g.:
-`docker build --platform=linux/amd64 -t myapp .`.
-
-Then, push it to your registry, e.g. `docker push myregistry.com/myapp`.
 
 ## API Endpoints
 
-# API Endpoints Documentation
+### Event Simulation and Management
 
-## Event Simulation and Management
-
-### Simulate Event by Item ID
+#### Simulate Event by Item ID
 - **URL**: `/events/{name}/Sim/{id}`
 - **Method**: `GET`
-- **Description**: Simulate an event for a specific event item by its ID.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ID of the event item.
 
-### Simulate Event
+#### Simulate Event
 - **URL**: `/events/{name}/Sim`
 - **Method**: `GET`
-- **Description**: Simulate an event for all event items associated with the specified event.
-- **Path Variable**:
-  - `name`: Name of the event.
 
-### Generate Records
+#### Generate Records
 - **URL**: `/events/{name}/Gen`
 - **Method**: `GET`
-- **Description**: Generate sample records for a specified event.
-- **Path Variable**:
-  - `name`: Name of the event.
 
-### Top Nations
+#### Top Nations
 - **URL**: `/events/TopN/{category}`
 - **Method**: `GET`
-- **Description**: Retrieve the top nation based on the specified category across all events.
-- **Path Variable**:
-  - `category`: Category for sorting (1: Gold, 2: Silver, 3: Bronze, 4: Points).
 
-### Top Nations by Event
+#### Top Nations by Event
 - **URL**: `/events/{name}/TopN/{category}`
 - **Method**: `GET`
-- **Description**: Retrieve the top nation for a specific event based on the specified category.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `category`: Category for sorting (1: Gold, 2: Silver, 3: Bronze, 4: Points).
 
-### Lowest Nations
+#### Lowest Nations
 - **URL**: `/events/LowN/{category}`
 - **Method**: `GET`
-- **Description**: Retrieve the lowest nation based on the specified category across all events.
-- **Path Variable**:
-  - `category`: Category for sorting (1: Gold, 2: Silver, 3: Bronze, 4: Points).
 
-### Lowest Nations by Event
+#### Lowest Nations by Event
 - **URL**: `/events/{name}/LowN/{category}`
 - **Method**: `GET`
-- **Description**: Retrieve the lowest nation for a specific event based on the specified category.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `category`: Category for sorting (1: Gold, 2: Silver, 3: Bronze, 4: Points).
 
-### Highest Medal Athlete
+#### Highest Medal Athlete
 - **URL**: `/events/HMA`
 - **Method**: `GET`
-- **Description**: Retrieve the athlete with the highest number of medals across all events.
 
-### Highest Medal Athlete by Event
+#### Highest Medal Athlete by Event
 - **URL**: `/events/{name}/HMA`
 - **Method**: `GET`
-- **Description**: Retrieve the athlete with the highest number of medals for a specific event.
-- **Path Variable**:
-  - `name`: Name of the event.
 
-### Highest Points Athlete
+#### Highest Points Athlete
 - **URL**: `/events/HPA`
 - **Method**: `GET`
-- **Description**: Retrieve the athlete with the highest points across all events.
 
-### Highest Points Athlete by Gender
+#### Highest Points Athlete by Gender
 - **URL**: `/events/HPA/{gender}`
 - **Method**: `GET`
-- **Description**: Retrieve the athlete with the highest points by gender.
-- **Path Variable**:
-  - `gender`: Gender of the athlete (1: Female, 2: Male).
 
-### Highest Points Athlete by Event
+#### Highest Points Athlete by Event
 - **URL**: `/events/{name}/HPA`
 - **Method**: `GET`
-- **Description**: Retrieve the athlete with the highest points for a specific event.
-- **Path Variable**:
-  - `name`: Name of the event.
 
-### Highest Points Athlete by Event and Gender
+#### Highest Points Athlete by Event and Gender
 - **URL**: `/events/{name}/HPA/{gender}`
 - **Method**: `GET`
-- **Description**: Retrieve the athlete with the highest points for a specific event and gender.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `gender`: Gender of the athlete (1: Female, 2: Male).
 
-### Medal Tally
+#### Medal Tally
 - **URL**: `/events/MT{n}`
 - **Method**: `GET`
-- **Description**: Retrieve the top `n` medal tallies across all events.
-- **Path Variable**:
-  - `n`: Number of top medal tallies to retrieve.
 
-### Medal Tally by Event
+#### Medal Tally by Event
 - **URL**: `/events/{name}/MT{n}`
 - **Method**: `GET`
-- **Description**: Retrieve the top `n` medal tallies for a specific event.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `n`: Number of top medal tallies to retrieve.
 
-## Event Management
+### Event Management
 
-### Get All Events
-- **URL**: `/events/ALlEvents`
+#### Get All Events
+- **URL**: `/events/AllEvents`
 - **Method**: `GET`
-- **Description**: Retrieve a list of all events.
 
-### Get Event by Name
-- **URL**: `/events/ALlEvents/{name}`
+#### Get Event by Name
+- **URL**: `/events/AllEvents/{name}`
 - **Method**: `GET`
-- **Description**: Retrieve a specific event by its name.
-- **Path Variable**:
-  - `name`: Name of the event.
 
-### Create Event
-- **URL**: `/events/ALlEvents/addNew`
+#### Create Event
+- **URL**: `/events/AllEvents/addNew`
 - **Method**: `POST`
-- **Description**: Create a new event.
-- **Request Body**: JSON object containing the event name.
 
-### Update Event
-- **URL**: `/events/ALlEvents/{id}`
+#### Update Event
+- **URL**: `/events/AllEvents/{id}`
 - **Method**: `PUT`
-- **Description**: Update the name of an existing event.
-- **Path Variable**:
-  - `id`: ID of the event.
-- **Request Body**: JSON object containing the new event name.
 
-### Delete Event
-- **URL**: `/events/ALlEvents/{id}`
+#### Delete Event
+- **URL**: `/events/AllEvents/{id}`
 - **Method**: `DELETE`
-- **Description**: Delete an event by its ID.
-- **Path Variable**:
-  - `id`: ID of the event.
 
-## Country Management
+### Country Management
 
-### Get All Countries
+#### Get All Countries
 - **URL**: `/events/{name}/countries`
 - **Method**: `GET`
-- **Description**: Retrieve a list of all countries associated with a specific event.
-- **Path Variable**:
-  - `name`: Name of the event.
 
-### Get Country by ID
+#### Get Country by ID
 - **URL**: `/events/{name}/countries/{id}`
 - **Method**: `GET`
-- **Description**: Retrieve a specific country by its ISO code for a specific event.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ISO code of the country.
 
-### Create Country
+#### Create Country
 - **URL**: `/events/{name}/countries`
 - **Method**: `POST`
-- **Description**: Create a new country.
-- **Path Variable**:
-  - `name`: Name of the event.
-- **Request Body**: JSON object containing country details.
 
-### Update Country
+#### Update Country
 - **URL**: `/events/{name}/countries/{id}`
 - **Method**: `PUT`
-- **Description**: Update the details of a country.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ISO code of the country.
-- **Request Body**: JSON object containing updated country details.
 
-### Delete Country
+#### Delete Country
 - **URL**: `/events/{name}/countries/{id}`
 - **Method**: `DELETE`
-- **Description**: Delete a country by its ISO code.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ISO code of the country.
 
-## Event Item Management
+### Event Item Management
 
-### Get All Event Items
+#### Get All Event Items
 - **URL**: `/events/{name}/eventItems`
 - **Method**: `GET`
-- **Description**: Retrieve a list of all event items associated with a specific event.
-- **Path Variable**:
-  - `name`: Name of the event.
 
-### Get Event Item by ID
+#### Get Event Item by ID
 - **URL**: `/events/{name}/eventItems/{id}`
 - **Method**: `GET`
-- **Description**: Retrieve a specific event item by its ID.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ID of the event item.
 
-### Get Winners by Event Item ID
+#### Get Winners by Event Item ID
 - **URL**: `/events/{name}/eventItems/{id}/Winners`
 - **Method**: `GET`
-- **Description**: Retrieve the winners (gold, silver, bronze) for a specific event item.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ID of the event item.
 
-### Create Event Item
+#### Create Event Item
 - **URL**: `/events/{name}/eventItems`
 - **Method**: `POST`
-- **Description**: Create a new event item for a specific event.
-- **Path Variable**:
-  - `name`: Name of the event.
-- **Request Body**: JSON object containing event item details.
 
-### Delete Event Item
+#### Delete Event Item
 - **URL**: `/events/{name}/eventItems/{id}`
 - **Method**: `DELETE`
-- **Description**: Delete an event item by its ID.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ID of the event item.
 
-## Athlete Management
+### Athlete Management
 
-### Get All Athletes
+#### Get All Athletes
 - **URL**: `/events/{name}/athletes`
 - **Method**: `GET`
-- **Description**: Retrieve a list of all athletes participating in a specific event.
-- **Path Variable**:
-  - `name`: Name of the event.
 
-### Get Athlete by ID
+#### Get Athlete by ID
 - **URL**: `/events/{name}/athletes/{id}`
 - **Method**: `GET`
-- **Description**: Retrieve a specific athlete by their ID.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ID of the athlete.
 
-### Create Athlete
+#### Create Athlete
 - **URL**: `/events/{name}/athletes`
 - **Method**: `POST`
-- **Description**: Create a new athlete for a specific event.
-- **Path Variable**:
-  - `name`: Name of the event.
-- **Request Body**: JSON object containing athlete details.
 
-### Delete Athlete
+#### Delete Athlete
 - **URL**: `/events/{name}/athletes/{id}`
 - **Method**: `DELETE`
-- **Description**: Delete an athlete by their ID.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ID of the athlete.
 
-## Additional Endpoints
+### Additional Endpoints
 
-### Get Medal Tally by Country and Event
+#### Get Medal Tally by Country and Event
 - **URL**: `/events/{name}/countries/{id}/tally`
 - **Method**: `GET`
-- **Description**: Retrieve the medal tally for a specific country and event.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ISO code of the country.
 
-### Get Event Item Records
+#### Get Event Item Records
 - **URL**: `/events/{name}/eventItems/{id}/records`
 - **Method**: `GET`
-- **Description**: Retrieve records of an event item by its ID.
-- **Path Variables**:
-  - `name`: Name of the event.
-  - `id`: ID of the event item.
 
-
-### Testing
+## Testing
 Use **Postman** to test the APIs:
 1. Open Postman and create a new request.
 2. Select the appropriate HTTP method (GET, POST, etc.).
-3. Enter the API URL (e.g., `http://localhost:8080/Sim/1`).
+3. Enter the API URL (e.g., `http://localhost:8080/events/Sim/1`).
 4. Send the request and inspect the response.
-
-
-## Example Usage
-
-- **Simulate an Event**: `GET http://localhost:8080/functions/Sim/1`
-- **Generate 100 Records**: `GET http://localhost:8080/functions/Gen/100`
-- **Get Top Country by Gold Medals**: `GET http://localhost:8080/functions/TopN/1`
-
 
 ## Contributing
 
-Feel free to submit issues and pull requests. Contributions are welcome!
+Feel free to contribute by submitting issues or pull requests. For detailed contribution guidelines, please refer to the project's contribution document.
+
 
 ### License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
