@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/events/ALlEvents")
+@RequestMapping("/events/AllEvents")
 public class EventController {
     @Autowired
     private DataGenerationService dataGenerationService;
